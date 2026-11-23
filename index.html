@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photon Production | By Mohamed Bugahhoos</title>
+  <meta name="description" content="Photon Production by Mohamed Bugahhoos: motion graphics, VFX, 3D design and post production. فوتون للإنتاج: موشن جرافيك، مؤثرات بصرية، تصميم ثلاثي الأبعاد وما بعد الإنتاج.">
+  <meta name="theme-color" content="#0e0a16">
+  <link rel="alternate" hreflang="en" href="en/">
+  <link rel="alternate" hreflang="ar" href="ar/">
+  <link rel="icon" href="assets/img/favicon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/favicon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
+  <link rel="prefetch" href="en/">
+</head>
+<body>
+  <main class="gate">
+    <div class="gate-inner">
+      <img class="gate-logo" src="assets/img/logo-full.png" width="528" height="478" alt="Photon Production">
+      <h1 class="sr-only">Photon Production</h1>
+      <div class="gate-by">By Mohamed Bugahhoos</div>
+
+      <div class="gate-choices">
+        <a class="gate-choice ar" href="ar/" hreflang="ar" lang="ar"><strong>العربية</strong></a>
+        <a class="gate-choice" href="en/" hreflang="en"><strong>English</strong></a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Transition: the logo zooms toward the viewer with a motion-blur trail, then the site opens -->
+  <div class="zoom-layer" aria-hidden="true"></div>
+  <div class="gate-curtain" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var logo = document.querySelector(".gate-logo");
+      var layer = document.querySelector(".zoom-layer");
+      var TRAIL = 4;        // logo + echo copies that create the motion blur
+      var DURATION = 360;   // ms until we jump to the main page
+
+      function zoomOut() {
+        var r = logo.getBoundingClientRect();
+        layer.innerHTML = "";
+        for (var k = 0; k < TRAIL; k++) {
+          var ghost = logo.cloneNode(false);
+          ghost.removeAttribute("class");
+          ghost.alt = "";
+          ghost.className = "zoom-ghost";
+          ghost.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;" +
+            "--o:" + (k === 0 ? 1 : (0.34 - k * 0.08)).toFixed(2) + ";--o0:" + (k === 0 ? 1 : 0) + ";animation-delay:" + (k * 14) + "ms";
+          layer.appendChild(ghost);
+        }
+        document.body.classList.add("leaving");
+      }
+
+      document.querySelectorAll(".gate-choice").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          // Let new-tab / modified clicks behave normally
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          try { sessionStorage.setItem("photon-intro", "1"); } catch (err) {}
+          if (reduce || document.body.classList.contains("leaving")) return;
+          e.preventDefault();
+          zoomOut();
+          setTimeout(function () { location.href = link.href; }, DURATION);
+        });
+      });
+
+      // Coming back with the browser's Back button: reset the page
+      window.addEventListener("pageshow", function (e) {
+        if (e.persisted) { document.body.classList.remove("leaving"); layer.innerHTML = ""; }
+      });
+    })();
+  </script>
+</body>
+</html>
