@@ -508,9 +508,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    ========================================================== */
 .gate-curtain { position: fixed; inset: 0; z-index: 30; pointer-events: none; opacity: 0; }
 .zoom-layer { position: fixed; inset: 0; z-index: 20; pointer-events: none; overflow: hidden; }
-.zoom-ghost {
-  position: absolute; opacity: 0;          /* absolute inside the fixed, clipped layer */
-  transform-origin: 50% 25%;          /* zoom into the centre of the logo icon */
+.zoom-ghost { position: absolute; }                 /* absolute inside the fixed, clipped layer */
+.zoom-img {
+  display: block; width: 100%; height: 100%; opacity: 0;
+  transform-origin: 50% 25%;                         /* zoom into the centre of the logo icon */
   will-change: transform, opacity, filter;
 }
 .gate-curtain { background: var(--bg); }
@@ -524,7 +525,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   /* Logo page: exit (fast zoom with motion blur) */
   .leaving .gate-by, .leaving .gate-choices { animation: sinkOut .14s ease-in both; }
   .leaving .gate-logo    { visibility: hidden; }          /* the ghost copies take over */
-  .leaving .zoom-ghost   { animation: zoomThrough .34s cubic-bezier(.6, 0, .9, .3) both; }
+  .leaving .zoom-img.lead  { animation: zoomLead  .34s cubic-bezier(.6, 0, .9, .3) both; }
+  .leaving .zoom-img.trail { animation: zoomTrail .34s cubic-bezier(.6, 0, .9, .3) both; }
   .leaving .gate::before { animation: fadeOutQuick .3s ease-in both; }
   .leaving .gate-curtain { animation: fadeIn .1s .27s ease-in both; }
 
@@ -545,12 +547,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @keyframes riseIn     { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
 @keyframes sinkOut    { to { opacity: 0; transform: translateY(18px); } }
 @keyframes dropIn     { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: none; } }
-@keyframes zoomThrough {
-  0%   { opacity: var(--o0); transform: scale(1);   filter: var(--logo-invert) blur(0); }
-  12%  { opacity: var(--o0); transform: scale(.95); filter: var(--logo-invert) blur(0); }
-  28%  { opacity: var(--o); }
-  60%  { opacity: var(--o); transform: scale(4);    filter: var(--logo-invert) blur(.2px); }
-  100% { opacity: 0;        transform: scale(26);   filter: var(--logo-invert) blur(.6px); }
+@keyframes zoomLead {
+  0%   { opacity: 1; transform: scale(1);   filter: blur(0); }
+  12%  { opacity: 1; transform: scale(.95); filter: blur(0); }
+  60%  { opacity: 1; transform: scale(4);   filter: blur(.2px); }
+  100% { opacity: 0; transform: scale(26);  filter: blur(.6px); }
+}
+@keyframes zoomTrail {
+  0%   { opacity: 0; transform: scale(1);   filter: blur(0); }
+  12%  { opacity: 0; transform: scale(.95); filter: blur(0); }
+  28%  { opacity: 1; }
+  60%  { opacity: 1; transform: scale(4);   filter: blur(.2px); }
+  100% { opacity: 0; transform: scale(26);  filter: blur(.6px); }
+}
 }
 @keyframes fadeOutQuick { to { opacity: 0; } }
 @keyframes fadeIn  { to { opacity: 1; } }

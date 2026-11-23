@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=4">
+  <link rel="stylesheet" href="assets/css/style.css?v=5">
   <link rel="prefetch" href="en/">
 </head>
 <body>
@@ -46,13 +46,18 @@
         var r = logo.getBoundingClientRect();
         layer.innerHTML = "";
         for (var k = 0; k < TRAIL; k++) {
-          var ghost = logo.cloneNode(false);
-          ghost.removeAttribute("class");
-          ghost.alt = "";
-          ghost.className = "zoom-ghost";
-          ghost.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;" +
-            "--o:" + (k === 0 ? 1 : (0.34 - k * 0.08)).toFixed(2) + ";--o0:" + (k === 0 ? 1 : 0) + ";animation-delay:" + (k * 14) + "ms";
-          layer.appendChild(ghost);
+          // Each copy sits in a wrapper with a fixed opacity (the trail fades out),
+          // so the keyframes need no CSS variables (Safari on iPhone ignores those in animations).
+          var wrap = document.createElement("span");
+          wrap.className = "zoom-ghost";
+          wrap.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;" +
+            "opacity:" + (k === 0 ? 1 : (0.34 - k * 0.08)).toFixed(2);
+          var img = logo.cloneNode(false);
+          img.alt = "";
+          img.className = "zoom-img " + (k === 0 ? "lead" : "trail");
+          img.style.animationDelay = (k * 14) + "ms";
+          wrap.appendChild(img);
+          layer.appendChild(wrap);
         }
         document.body.classList.add("leaving");
       }
